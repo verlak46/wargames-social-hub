@@ -8,7 +8,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "match-hammer": {
+    "battle-link": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -101,10 +101,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "match-hammer:build:production"
+              "buildTarget": "battle-link:build:production"
             },
             "development": {
-              "buildTarget": "match-hammer:build:development"
+              "buildTarget": "battle-link:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -115,24 +115,24 @@
         "ionic-cordova-serve": {
           "builder": "@ionic/angular-toolkit:cordova-serve",
           "options": {
-            "cordovaBuildTarget": "match-hammer:ionic-cordova-build",
-            "devServerTarget": "match-hammer:serve"
+            "cordovaBuildTarget": "battle-link:ionic-cordova-build",
+            "devServerTarget": "battle-link:serve"
           },
           "configurations": {
             "production": {
-              "cordovaBuildTarget": "match-hammer:ionic-cordova-build:production",
-              "devServerTarget": "match-hammer:serve:production"
+              "cordovaBuildTarget": "battle-link:ionic-cordova-build:production",
+              "devServerTarget": "battle-link:serve:production"
             }
           }
         },
         "ionic-cordova-build": {
           "builder": "@ionic/angular-toolkit:cordova-build",
           "options": {
-            "browserTarget": "match-hammer:build"
+            "browserTarget": "battle-link:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "match-hammer:build:production"
+              "browserTarget": "battle-link:build:production"
             }
           }
         }
