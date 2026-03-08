@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://battle-link-api.onrender.com/',
+  apiUrl: 'http://localhost:3000/',
   firebase: {
     apiKey: 'AIzaSyB_cezDew0wDyl2TnxkHCWnwBaY-NP6MJM',
     authDomain: 'battlelink-8f1b1.firebaseapp.com',
