@@ -2,7 +2,7 @@ import { Component, inject, input, output } from '@angular/core';
 import { IonItem, IonLabel, IonInput, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TipoCreacion } from '../../nuevo-form.types';
-import { FirestoreService } from '../../../../core/services/firestore.service';
+import { ApiService } from '../../../../core/services/api.service';
 import { Wargame } from '../../../../shared/models/IWargame';
 
 @Component({
@@ -36,7 +36,7 @@ import { Wargame } from '../../../../shared/models/IWargame';
   imports: [IonItem, IonLabel, IonInput, IonSelect, IonSelectOption],
 })
 export class PasoJuegoComponent {
-  private readonly firestore = inject(FirestoreService);
+  private readonly api = inject(ApiService);
 
   tipo = input.required<TipoCreacion>();
   juego = input('');
@@ -45,7 +45,7 @@ export class PasoJuegoComponent {
   juegoChange = output<string>();
   sistemaChange = output<string>();
 
-  wargames = toSignal(this.firestore.getActiveWargames(), {
+  wargames = toSignal(this.api.getWargames(), {
     initialValue: [] as Wargame[],
   });
 }
