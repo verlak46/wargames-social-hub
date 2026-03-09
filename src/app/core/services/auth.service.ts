@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { auth } from '../../app.config';
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
-import { ApiService, AuthPasswordRequest, AuthUser } from './api.service';
+import { ApiService, AuthPasswordRequest, AuthUser, UpdateProfilePayload } from './api.service';
 
 const STORAGE_KEY = 'battle-link-auth';
 
@@ -99,5 +99,19 @@ export class AuthService {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, user: profile }));
     }
     this.user.set(profile);
+  }
+
+  async completeOnboarding(partial: Omit<UpdateProfilePayload, 'onboardingCompleted'>): Promise<void> {
+    const payload: UpdateProfilePayload = {
+      ...partial,
+      onboardingCompleted: true,
+    };
+    const updated = await firstValueFrom(this.api.updateProfile(payload));
+
+    const token = this.getToken();
+    if (token) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, user: updated }));
+    }
+    this.user.set(updated);
   }
 }

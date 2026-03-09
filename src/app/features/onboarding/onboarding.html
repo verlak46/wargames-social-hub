@@ -1,0 +1,146 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Bienvenido</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="stepper">
+    @for (paso of pasos; track paso.id) {
+
+      <app-step-header
+        [paso]="paso"
+        [total]="totalPasos"
+        [active]="step() === paso.id"
+        [done]="step() > paso.id"
+        (clicked)="step() > paso.id ? step.set(paso.id) : null">
+      </app-step-header>
+
+      @if (step() === paso.id) {
+        <div class="step__body">
+          @if (loading()) {
+            <div class="onboarding__loading">
+              <ion-spinner></ion-spinner>
+            </div>
+          } @else {
+            @if (paso.id === 1) {
+              <section>
+                <h2>Sobre ti</h2>
+                <ion-item>
+                  <ion-label position="stacked">Nombre</ion-label>
+                  <ion-input
+                    [value]="name()"
+                    (ionInput)="name.set($any($event.target).value ?? '')"
+                    placeholder="Cómo quieres que te vean otros jugadores"
+                  ></ion-input>
+                </ion-item>
+
+                <ion-item lines="none" class="onboarding__segment-label">
+                  <ion-label>Experiencia</ion-label>
+                </ion-item>
+                <ion-segment [value]="experienceLevel()" scrollable="true" class="onboarding__segment">
+                  <ion-segment-button
+                    value="beginner"
+                    (click)="seleccionarExperiencia('beginner')"
+                  >
+                    <ion-label>Principiante</ion-label>
+                  </ion-segment-button>
+                  <ion-segment-button
+                    value="casual"
+                    (click)="seleccionarExperiencia('casual')"
+                  >
+                    <ion-label>Casual</ion-label>
+                  </ion-segment-button>
+                  <ion-segment-button
+                    value="competitive"
+                    (click)="seleccionarExperiencia('competitive')"
+                  >
+                    <ion-label>Competitivo</ion-label>
+                  </ion-segment-button>
+                </ion-segment>
+              </section>
+            } @else if (paso.id === 2) {
+              <section>
+                <h2>Juegos favoritos</h2>
+                <p class="onboarding__hint">
+                  Elige al menos un wargame para recomendarte partidas.
+                </p>
+
+                <ion-list>
+                  @for (game of wargames(); track game.id) {
+                    <ion-item>
+                      <ion-label>{{ game.name }}</ion-label>
+                      <ion-chip
+                        [outline]="!esFavorito(game.id)"
+                        color="primary"
+                        (click)="toggleFavorite(game.id)"
+                      >
+                        {{ esFavorito(game.id) ? 'Seleccionado' : 'Elegir' }}
+                      </ion-chip>
+                    </ion-item>
+                  }
+                </ion-list>
+              </section>
+            } @else if (paso.id === 3) {
+              <section>
+                <h2>Ubicación</h2>
+                <p class="onboarding__hint">
+                  Opcional, pero nos ayuda a mostrarte partidas y eventos cerca de ti.
+                </p>
+
+                <ion-button
+                  expand="block"
+                  color="secondary"
+                  (click)="usarUbicacionActual()"
+                  [disabled]="locationLoading()"
+                >
+                  @if (locationLoading()) {
+                    <ion-spinner slot="start"></ion-spinner>
+                  }
+                  Usar mi ubicación actual
+                </ion-button>
+
+                @if (location()) {
+                  <p class="onboarding__location">
+                    Ubicación guardada (lat: {{ location()![0] | number:'1.4-4' }},
+                    lng: {{ location()![1] | number:'1.4-4' }}).
+                  </p>
+                }
+              </section>
+            }
+          }
+
+          @if (errorMessage()) {
+            <p class="onboarding__error">{{ errorMessage() }}</p>
+          }
+
+          <div class="step__actions">
+            @if (step() > 1) {
+              <ion-button fill="outline" (click)="anterior()">
+                Anterior
+              </ion-button>
+            }
+            @if (!esUltimoPaso()) {
+              <ion-button
+                color="primary"
+                (click)="siguiente()"
+                [disabled]="!esPasoValido()"
+              >
+                Siguiente
+              </ion-button>
+            } @else {
+              <ion-button
+                color="success"
+                (click)="finalizar()"
+                [disabled]="!esPasoValido() || loading()"
+              >
+                Finalizar
+              </ion-button>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+</ion-content>
+

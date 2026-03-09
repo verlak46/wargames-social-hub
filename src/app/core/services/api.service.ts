@@ -4,6 +4,13 @@ import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Wargame } from '../../shared/models/IWargame';
 
+export type ExperienceLevel = 'beginner' | 'casual' | 'competitive';
+
+export interface UserLocation {
+  type: 'Point';
+  coordinates: [number, number];
+}
+
 export interface AuthUser {
   provider: string;
   _id: string;
@@ -12,6 +19,9 @@ export interface AuthUser {
   name: string;
   picture: string | null;
   favoriteGames: string[];
+  experienceLevel?: ExperienceLevel;
+  location?: UserLocation | null;
+  onboardingCompleted?: boolean;
   createdAt: string;
   __v: number;
 }
@@ -29,6 +39,14 @@ export interface AuthPasswordRequest {
 export interface AuthPasswordResponse {
   token: string;
   user: AuthUser;
+}
+
+export interface UpdateProfilePayload {
+  name?: string;
+  favoriteGames?: string[];
+  experienceLevel?: ExperienceLevel;
+  location?: UserLocation | null;
+  onboardingCompleted?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -55,5 +73,9 @@ export class ApiService {
 
   getProfile(): Observable<AuthUser> {
     return this.http.get<{ user: AuthUser }>(`${this.baseUrl}/user/profile`).pipe(map((res) => res.user));
+  }
+
+  updateProfile(payload: UpdateProfilePayload): Observable<AuthUser> {
+    return this.http.patch<AuthUser>(`${this.baseUrl}/user/profile`, payload);
   }
 }

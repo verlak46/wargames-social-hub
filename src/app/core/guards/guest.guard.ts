@@ -8,8 +8,9 @@ export const guestGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   return auth.ready.then(() => {
-    if (auth.user()) {
-      router.navigate(['/']);
+    const user = auth.user();
+    if (user) {
+      router.navigate([user.onboardingCompleted ? '/' : '/onboarding']);
       return false;
     }
     return true;

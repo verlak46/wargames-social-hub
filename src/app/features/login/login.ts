@@ -103,7 +103,10 @@ export class LoginPage {
       } else {
         await this.auth.login(email, password);
       }
-      this.router.navigate(['/']);
+
+      const user = this.auth.user();
+      const target = user?.onboardingCompleted ? '/' : '/onboarding';
+      this.router.navigate([target]);
     } catch (err: unknown) {
       const message =
         err && typeof err === 'object' && 'code' in err
@@ -122,7 +125,9 @@ export class LoginPage {
     this.loading.set(true);
     try {
       await this.auth.loginWithGoogle();
-      this.router.navigate(['/']);
+      const user = this.auth.user();
+      const target = user?.onboardingCompleted ? '/' : '/onboarding';
+      this.router.navigate([target]);
     } catch (err: unknown) {
       const message =
         err && typeof err === 'object' && 'code' in err

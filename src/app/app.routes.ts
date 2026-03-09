@@ -10,6 +10,12 @@ export const routes: Routes = [
       import('./features/login/login').then((m) => m.LoginPage),
   },
   {
+    path: 'onboarding',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/onboarding/onboarding').then((m) => m.OnboardingPage),
+  },
+  {
     path: '',
     canActivate: [authGuard],
     loadChildren: () =>
