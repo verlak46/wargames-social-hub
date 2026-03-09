@@ -17,8 +17,8 @@ describe('OnboardingPage', () => {
           provide: AuthService,
           useValue: {
             user: () => null,
-            completeOnboarding: jasmine.createSpy('completeOnboarding').and.resolveTo(undefined),
-          } as Partial<AuthService>,
+            completeOnboarding: () => Promise.resolve(),
+          } as unknown as Partial<AuthService>,
         },
         {
           provide: ApiService,

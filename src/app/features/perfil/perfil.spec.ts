@@ -4,23 +4,23 @@ import { provideIonicAngular } from '@ionic/angular/standalone';
 import { PerfilPage } from './perfil';
 import { AuthService } from '../../core/services/auth.service';
 
-function createAuthMock() {
-  return {
-    user: () =>
-      ({
-        name: 'Test User',
-        email: 'test@example.com',
-        picture: null,
-      } as unknown),
-    logout: jasmine.createSpy('logout').and.resolveTo(undefined),
-  } as Partial<AuthService> as AuthService;
-}
-
 describe('PerfilPage', () => {
   let authMock: AuthService;
+  let logoutCalled = 0;
 
   beforeEach(async () => {
-    authMock = createAuthMock();
+    logoutCalled = 0;
+    authMock = {
+      user: () =>
+        ({
+          name: 'Test User',
+          email: 'test@example.com',
+          picture: null,
+        } as unknown),
+      logout: async () => {
+        logoutCalled++;
+      },
+    } as Partial<AuthService> as AuthService;
 
     await TestBed.configureTestingModule({
       imports: [PerfilPage],
@@ -58,6 +58,6 @@ describe('PerfilPage', () => {
     expect(button).toBeTruthy();
     button?.click();
     await Promise.resolve();
-    expect(authMock.logout).toHaveBeenCalled();
+    expect(logoutCalled).toBe(1);
   });
 });

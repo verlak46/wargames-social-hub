@@ -4,7 +4,7 @@ import { provideIonicAngular } from '@ionic/angular/standalone';
 import { of } from 'rxjs';
 import { PasoJuegoComponent } from './paso-juego';
 import { TipoCreacion } from '../../nuevo-form.types';
-import { FirestoreService } from '../../../../core/services/firestore.service';
+import { ApiService } from '../../../../core/services/api.service';
 import { Wargame } from '../../../../shared/models/IWargame';
 
 @Component({
@@ -34,9 +34,9 @@ describe('PasoJuegoComponent', () => {
       providers: [
         provideIonicAngular(),
         {
-          provide: FirestoreService,
+          provide: ApiService,
           useValue: {
-            getActiveWargames: () =>
+            getWargames: () =>
               of<Wargame[]>([
                 {
                   id: 'warhammer40k',
@@ -55,7 +55,7 @@ describe('PasoJuegoComponent', () => {
                   active: true,
                 },
               ]),
-          } satisfies Partial<FirestoreService>,
+          } satisfies Partial<ApiService>,
         },
       ],
     }).compileComponents();
@@ -112,7 +112,7 @@ describe('PasoJuegoComponent', () => {
     expect(fixture.componentInstance.lastSistema).toBe('5ª edición');
   });
 
-  it('should render select options from firestore service', () => {
+  it('should render select options from API service', () => {
     const fixture = TestBed.createComponent(TestHostComponent);
     fixture.detectChanges();
     const el = fixture.nativeElement as HTMLElement;
