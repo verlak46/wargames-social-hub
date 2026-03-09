@@ -25,7 +25,6 @@ export class PerfilPage implements OnInit {
   private readonly router = inject(Router);
 
   user = computed(() => {
-    console.log('user', this.auth.user());
     return this.auth.user();
   });
 

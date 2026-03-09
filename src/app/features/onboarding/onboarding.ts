@@ -163,7 +163,7 @@ export class OnboardingPage implements OnInit {
         favoriteGames: this.favoriteGamesIds(),
         location,
       });
-      console.log('onboarding completado');
+      
       this.router.navigate(['/']);
     } catch (err) {
       const message =
