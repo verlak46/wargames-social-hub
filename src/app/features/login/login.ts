@@ -108,7 +108,9 @@ export class LoginPage {
       const message =
         err && typeof err === 'object' && 'code' in err
           ? this.firebaseMessage((err as { code: string }).code)
-          : 'Ha ocurrido un error. Inténtalo de nuevo.';
+          : err instanceof Error
+            ? err.message
+            : 'Ha ocurrido un error. Inténtalo de nuevo.';
       this.errorMessage.set(message);
     } finally {
       this.loading.set(false);
@@ -125,7 +127,9 @@ export class LoginPage {
       const message =
         err && typeof err === 'object' && 'code' in err
           ? this.firebaseMessage((err as { code: string }).code)
-          : 'No se pudo iniciar sesión con Google.';
+          : err instanceof Error
+            ? err.message
+            : 'No se pudo iniciar sesión con Google.';
       this.errorMessage.set(message);
     } finally {
       this.loading.set(false);

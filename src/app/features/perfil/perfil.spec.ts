@@ -8,9 +8,9 @@ function createAuthMock() {
   return {
     user: () =>
       ({
-        displayName: 'Test User',
+        name: 'Test User',
         email: 'test@example.com',
-        photoURL: null,
+        picture: null,
       } as unknown),
     logout: jasmine.createSpy('logout').and.resolveTo(undefined),
   } as Partial<AuthService> as AuthService;

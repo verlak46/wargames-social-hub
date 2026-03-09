@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject } from '@angular/core';
 import { IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
@@ -20,15 +20,18 @@ import { AuthService } from '../../core/services/auth.service';
     IonIcon,
   ],
 })
-export class PerfilPage {
+export class PerfilPage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  user = computed(() => this.auth.user());
+  user = computed(() => {
+    console.log('user', this.auth.user());
+    return this.auth.user();
+  });
 
-  displayName = computed(() => this.user()?.displayName || 'Jugador');
+  displayName = computed(() => this.user()?.name || 'Jugador');
   email = computed(() => this.user()?.email ?? '');
-  photoURL = computed(() => this.user()?.photoURL ?? null);
+  photoURL = computed(() => this.user()?.picture ?? null);
 
   initials = computed(() => {
     const name = this.displayName();
@@ -41,6 +44,10 @@ export class PerfilPage {
 
   constructor() {
     addIcons({ logOutOutline, mailOutline, personCircleOutline });
+  }
+
+  ngOnInit(): void {
+    this.auth.ready.then(() => this.auth.refreshProfile());
   }
 
   async logout() {
