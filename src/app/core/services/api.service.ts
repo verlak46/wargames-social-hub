@@ -12,21 +12,21 @@ export interface UserLocation {
 }
 
 export interface AuthUser {
-  provider: string;
   _id: string;
+  provider: 'local' | 'google';
   googleId?: string | null;
   email: string;
   name: string;
-  picture: string | null;
+  picture?: string | null;
   favoriteGames: string[];
   experienceLevel?: ExperienceLevel;
   location?: UserLocation | null;
-  onboardingCompleted?: boolean;
+  onboardingCompleted: boolean;
   createdAt: string;
-  __v: number;
+  updatedAt: string;
 }
 
-export interface AuthGoogleResponse {
+export interface AuthResponse {
   token: string;
   user: AuthUser;
 }
@@ -36,17 +36,17 @@ export interface AuthPasswordRequest {
   password: string;
 }
 
-export interface AuthPasswordResponse {
-  token: string;
-  user: AuthUser;
-}
-
 export interface UpdateProfilePayload {
   name?: string;
   favoriteGames?: string[];
   experienceLevel?: ExperienceLevel;
   location?: UserLocation | null;
-  onboardingCompleted?: boolean;
+}
+
+interface ApiResponse<T> {
+  statusCode: number;
+  message: string;
+  data: T;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -55,31 +55,45 @@ export class ApiService {
 
   constructor(private readonly http: HttpClient) {}
 
+  private unwrap<T>(source: Observable<ApiResponse<T>>): Observable<T> {
+    return source.pipe(map((res) => res.data));
+  }
+
   getWargames(): Observable<Wargame[]> {
-    return this.http.get<Wargame[]>(`${this.baseUrl}/wargames`);
+    return this.unwrap(this.http.get<ApiResponse<Wargame[]>>(`${this.baseUrl}/wargames`));
   }
 
-  authGoogle(token: string): Observable<AuthGoogleResponse> {
-    return this.http.post<AuthGoogleResponse>(`${this.baseUrl}/auth/google`, { token });
+  authGoogle(token: string): Observable<AuthResponse> {
+    return this.unwrap(
+      this.http.post<ApiResponse<AuthResponse>>(`${this.baseUrl}/auth/google`, { token }),
+    );
   }
 
-  authRegister(payload: AuthPasswordRequest): Observable<AuthPasswordResponse> {
-    return this.http.post<AuthPasswordResponse>(`${this.baseUrl}/auth/register`, payload);
+  authRegister(payload: AuthPasswordRequest): Observable<AuthResponse> {
+    return this.unwrap(
+      this.http.post<ApiResponse<AuthResponse>>(`${this.baseUrl}/auth/register`, payload),
+    );
   }
 
-  authLogin(payload: AuthPasswordRequest): Observable<AuthPasswordResponse> {
-    return this.http.post<AuthPasswordResponse>(`${this.baseUrl}/auth/login`, payload);
+  authLogin(payload: AuthPasswordRequest): Observable<AuthResponse> {
+    return this.unwrap(
+      this.http.post<ApiResponse<AuthResponse>>(`${this.baseUrl}/auth/login`, payload),
+    );
   }
 
   getProfile(): Observable<AuthUser> {
-    return this.http.get<{ user: AuthUser }>(`${this.baseUrl}/user/profile`).pipe(map((res) => res.user));
+    return this.unwrap(this.http.get<ApiResponse<AuthUser>>(`${this.baseUrl}/user/profile`));
   }
 
   completeOnboarding(payload: UpdateProfilePayload): Observable<AuthUser> {
-    return this.http.post<{ user: AuthUser }>(`${this.baseUrl}/user/onboarding`, payload).pipe(map((res) => res.user));
+    return this.unwrap(
+      this.http.post<ApiResponse<AuthUser>>(`${this.baseUrl}/user/onboarding`, payload),
+    );
   }
 
   updateProfile(payload: UpdateProfilePayload): Observable<AuthUser> {
-    return this.http.patch<{ user: AuthUser }>(`${this.baseUrl}/user/profile`, payload).pipe(map((res) => res.user));
+    return this.unwrap(
+      this.http.patch<ApiResponse<AuthUser>>(`${this.baseUrl}/user/profile`, payload),
+    );
   }
 }

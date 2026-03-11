@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { auth } from '../../app.config';
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { firstValueFrom } from 'rxjs';
-import { ApiService, AuthPasswordRequest, AuthUser, UpdateProfilePayload } from './api.service';
+import { ApiService, AuthPasswordRequest, AuthResponse, AuthUser, UpdateProfilePayload } from './api.service';
 
 const STORAGE_KEY = 'battle-link-auth';
 
@@ -70,8 +70,8 @@ export class AuthService {
     const idToken = await credential.user.getIdToken();
     await signOut(this.firebaseAuth);
 
-    const res = await firstValueFrom(this.api.authGoogle(idToken));
-    this.saveSession(res.token, res.user);
+    const { token, user }: AuthResponse = await firstValueFrom(this.api.authGoogle(idToken));
+    this.saveSession(token, user);
   }
 
   async logout(): Promise<void> {
@@ -80,14 +80,14 @@ export class AuthService {
 
   async register(email: string, password: string): Promise<void> {
     const payload: AuthPasswordRequest = { email, password };
-    const res = await firstValueFrom(this.api.authRegister(payload));
-    this.saveSession(res.token, res.user);
+    const { token, user }: AuthResponse = await firstValueFrom(this.api.authRegister(payload));
+    this.saveSession(token, user);
   }
 
   async login(email: string, password: string): Promise<void> {
     const payload: AuthPasswordRequest = { email, password };
-    const res = await firstValueFrom(this.api.authLogin(payload));
-    this.saveSession(res.token, res.user);
+    const { token, user }: AuthResponse = await firstValueFrom(this.api.authLogin(payload));
+    this.saveSession(token, user);
   }
 
   async refreshProfile(): Promise<void> {
@@ -101,11 +101,7 @@ export class AuthService {
     this.user.set(profile);
   }
 
-  async completeOnboarding(partial: Omit<UpdateProfilePayload, 'onboardingCompleted'>): Promise<void> {
-    const payload: UpdateProfilePayload = {
-      ...partial,
-      onboardingCompleted: true,
-    };
+  async completeOnboarding(payload: UpdateProfilePayload): Promise<void> {
     const updated = await firstValueFrom(this.api.completeOnboarding(payload));
 
     const token = this.getToken();
