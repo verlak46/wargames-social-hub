@@ -20,7 +20,7 @@
   <div class="perfil-container">
     <div class="perfil-avatar">
       @if (photoURL()) {
-        <img [src]="photoURL()!" [alt]="displayName()" />
+        <img [src]="photoURL()!" [alt]="displayNick()" />
       } @else if (initials()) {
         {{ initials() }}
       } @else {
@@ -29,7 +29,7 @@
     </div>
 
     <div class="perfil-text">
-      <h2 class="perfil-name">{{ displayName() }}</h2>
+      <h2 class="perfil-name">{{ displayNick() }}</h2>
       @if (email()) {
         <p class="perfil-email">{{ email() }}</p>
       }
@@ -39,8 +39,15 @@
       <ion-item lines="none">
         <ion-icon slot="start" name="mail-outline"></ion-icon>
         <ion-label>
-          <h3>Correo</h3>
+          <h3>Correo electrónico</h3>
           <p>{{ email() || 'Sin correo disponible' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-icon slot="start" name="person-outline"></ion-icon>
+        <ion-label>
+          <h3>Nombre</h3>
+          <p>{{ displayName() || 'Sin nombre disponible' }}</p>
         </ion-label>
       </ion-item>
     </div>
@@ -52,13 +59,6 @@
         (click)="showEdit.set(true)"
         (keyup.enter)="showEdit.set(true)">
         Configurar perfil
-      </ion-button>
-      <ion-button
-        expand="block"
-        color="medium"
-        routerLink="/nuevo"
-        (keyup.enter)="logout()">
-        Crear nueva partida / evento
       </ion-button>
       <ion-button
         expand="block"

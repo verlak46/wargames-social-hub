@@ -17,6 +17,7 @@ export interface AuthUser {
   googleId?: string | null;
   email: string;
   name: string;
+  nick?: string;
   picture?: string | null;
   favoriteGames: string[];
   experienceLevel?: ExperienceLevel;
@@ -38,6 +39,7 @@ export interface AuthPasswordRequest {
 
 export interface UpdateProfilePayload {
   name?: string;
+  nick?: string;
   favoriteGames?: string[];
   experienceLevel?: ExperienceLevel;
   location?: UserLocation | null;

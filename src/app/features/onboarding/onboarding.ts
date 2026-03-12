@@ -42,6 +42,7 @@ export class OnboardingPage implements OnInit {
   wargames = signal<Wargame[]>([]);
 
   name = signal('');
+  nick = signal('');
   experienceLevel = signal<ExperienceLevel | null>(null);
   favoriteGamesIds = signal<string[]>([]);
 
@@ -67,7 +68,7 @@ export class OnboardingPage implements OnInit {
   esPasoValido = computed(() => {
     switch (this.step()) {
       case 1:
-        return this.name().trim().length > 0 && !!this.experienceLevel();
+        return this.name().trim().length > 0 && this.nick().trim().length >= 3 && !!this.experienceLevel();
       case 2:
         return this.favoriteGamesIds().length > 0;
       case 3:
@@ -86,6 +87,7 @@ export class OnboardingPage implements OnInit {
     const current = this.auth.user();
     if (current) {
       this.name.set(current.name ?? '');
+      this.nick.set(current.nick ?? current.name ?? '');
       if (current.experienceLevel) {
         this.experienceLevel.set(current.experienceLevel);
       }
@@ -154,6 +156,7 @@ export class OnboardingPage implements OnInit {
 
       await this.auth.completeOnboarding({
         name: this.name().trim(),
+        nick: this.nick().trim(),
         experienceLevel: this.experienceLevel() ?? undefined,
         favoriteGames: this.favoriteGamesIds(),
         location,

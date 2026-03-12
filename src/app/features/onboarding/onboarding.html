@@ -26,8 +26,10 @@
             @if (paso.id === 1) {
               <app-onboarding-paso-perfil
                 [name]="name()"
+                [nick]="nick()"
                 [experienceLevel]="experienceLevel()"
                 (nameChange)="name.set($event)"
+                (nickChange)="nick.set($event)"
                 (experienceLevelChange)="experienceLevel.set($event)">
               </app-onboarding-paso-perfil>
             } @else if (paso.id === 2) {

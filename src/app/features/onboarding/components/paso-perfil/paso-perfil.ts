@@ -14,13 +14,22 @@ import { ExperienceLevel } from '../../../../core/services/api.service';
     <section>
       <h3>Sobre ti</h3>
       <ion-item>
+        <ion-label position="stacked">Nick de jugador</ion-label>
+        <ion-input
+          [value]="nick()"
+          (ionInput)="nickChange.emit($any($event.target).value ?? '')"
+          placeholder="Cómo quieres que te vean otros jugadores"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
         <ion-label position="stacked">Nombre</ion-label>
         <ion-input
           [value]="name()"
           (ionInput)="nameChange.emit($any($event.target).value ?? '')"
-          placeholder="Cómo quieres que te vean otros jugadores"
+          placeholder="Tu nombre real"
         ></ion-input>
       </ion-item>
+
 
       <ion-item lines="none" class="onboarding__segment-label">
         <ion-label>Experiencia</ion-label>
@@ -66,9 +75,11 @@ import { ExperienceLevel } from '../../../../core/services/api.service';
 })
 export class PasoPerfilOnboardingComponent {
   name = input('');
+  nick = input('');
   experienceLevel = input<ExperienceLevel | null>(null);
 
   nameChange = output<string>();
+  nickChange = output<string>();
   experienceLevelChange = output<ExperienceLevel>();
 }
 

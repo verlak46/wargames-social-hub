@@ -2,6 +2,7 @@ import { Component, OnInit, inject, output, signal } from '@angular/core';
 import {
   IonItem,
   IonLabel,
+  IonInput,
   IonButton,
   IonSegment,
   IonSegmentButton,
@@ -9,6 +10,7 @@ import {
 } from '@ionic/angular/standalone';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ApiService, ExperienceLevel } from '../../../../core/services/api.service';
+import { getApiError } from '../../../../core/utils/api-error';
 import { Wargame } from '../../../../shared/models/IWargame';
 import { PasoJuegosOnboardingComponent } from '../../../onboarding/components/paso-juegos/paso-juegos';
 import { PasoUbicacionOnboardingComponent } from '../../../onboarding/components/paso-ubicacion/paso-ubicacion';
@@ -18,7 +20,9 @@ import { PasoUbicacionOnboardingComponent } from '../../../onboarding/components
   templateUrl: './perfil-edit.html',
   styleUrl: './perfil-edit.scss',
   imports: [
+    IonItem,
     IonLabel,
+    IonInput,
     IonButton,
     IonSegment,
     IonSegmentButton,
@@ -33,6 +37,7 @@ export class PerfilEditComponent implements OnInit {
 
   closed = output<void>();
 
+  nick = signal('');
   experienceLevel = signal<ExperienceLevel | null>(null);
   favoriteGamesIds = signal<string[]>([]);
   wargames = signal<Wargame[]>([]);
@@ -44,6 +49,7 @@ export class PerfilEditComponent implements OnInit {
   ngOnInit(): void {
     const current = this.auth.user();
     if (current) {
+      this.nick.set(current.nick ?? '');
       this.experienceLevel.set(current.experienceLevel ?? null);
       this.favoriteGamesIds.set(current.favoriteGames ?? []);
       const coords = current.location?.coordinates;
@@ -91,16 +97,16 @@ export class PerfilEditComponent implements OnInit {
         locationPayload = { type: 'Point', coordinates: [coords[1], coords[0]] };
       }
 
+      const nickValue = this.nick().trim();
       await this.auth.updateProfile({
+        nick: nickValue || undefined,
         experienceLevel: this.experienceLevel() ?? undefined,
         favoriteGames: this.favoriteGamesIds(),
         location: locationPayload,
       });
       this.closed.emit();
     } catch (err) {
-      this.errorMessage.set(
-        err instanceof Error ? err.message : 'No se pudo guardar el perfil.',
-      );
+      this.errorMessage.set(getApiError(err, 'No se pudo guardar el perfil.'));
     } finally {
       this.saving.set(false);
     }

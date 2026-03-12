@@ -41,6 +41,7 @@ export class PerfilPage implements OnInit {
 
   user = computed(() => this.auth.user());
 
+  displayNick = computed(() => this.user()?.nick || 'Jugador');
   displayName = computed(() => this.user()?.name || 'Jugador');
   email = computed(() => this.user()?.email ?? '');
   photoURL = computed(() => this.user()?.picture ?? null);

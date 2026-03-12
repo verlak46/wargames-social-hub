@@ -1,4 +1,13 @@
 <div class="perfil-edit">
+  <ion-item>
+    <ion-label position="stacked">Nick de jugador</ion-label>
+    <ion-input
+      [value]="nick()"
+      (ionInput)="nick.set($any($event.target).value ?? '')"
+      placeholder="@tu_nick"
+    ></ion-input>
+  </ion-item>
+
   <h3>Experiencia</h3>
   <ion-segment [value]="experienceLevel() ?? ''" scrollable="true" class="perfil-edit__segment">
     <ion-segment-button value="beginner" (click)="setExperience('beginner')">
